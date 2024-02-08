@@ -1,0 +1,235 @@
+package Main.java.Banco;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BancoApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(BancoApplication.class, args);
+	}
+
+}
+/* ---- BEM VINDO AO CODIGO DO IGOR MATHEUS -----
+AQUI VOCÊ PODE OBSERVAR UM CODIGO DE SISTEMA BANCARIO
+ADAPTEI ALGUNS COMANDOS MAIS COMPLEXOS PARA MOSTRAR MEU NIVEL DE CONHECIMENTO
+ESTE CÓDIGO FOI CRIADO NO CODE STUDIO DO CELULAR
+TODOS OS COMANDOS, METODOS, GETTER E SETTER, ATRIBUTOS, BLOCOS TRY CATCH,
+FORAM CRIANDO MANUALMENTE
+LOGO ABAIXO SÃO AS INSTANCIAS DAS CLASSES E A CHAMADA DE SEUS MÉTODOS PARA
+ANALISAR O FUNCIONAMENTO DO PROGRAMA!!
+*/
+public class Main { //CLASSE PRINCIPAL ONDE INSTANCIAREI OS OBJETOS E CHAMAREI SEUS METODOS
+					public static void main(String[] args){
+								Conta c1 = new Conta("Igor Matheus Braz Carvalho", "546734-78");//INSTANCIA DA CLASSE CONTA RECEBENDO SEHS PARÂMETROS
+								System.out.println(c1.toString());
+								c1.depositar(1000000.001); //TESTE DE TODOS OS MÉTODOS CRIADOS
+								c1.depositar(900.00);
+								c1.sacar(300.00);
+								c1.fecharConta();
+									c1.sacar(600.00);
+								c1.fecharConta();
+								
+								ContaPoupanca p1 = new ContaPoupanca(); //INSTANCIA FA CLASSE CONTA POUPANCA
+								System.out.println(p1.toString());
+								p1.abrirConta(); //TESTES DOS METODOS SUBSTITUIDOS
+								p1.depositar(300.00);
+								p1.pagarJuros();
+						
+				}
+}
+interface Interatividade{ //INTERFACE PARA FACILITAR O ACESSO DAS CLASSES AOS MÉTODOS
+				public void abrirConta();
+				public void fecharConta();
+				public void depositar(double v);
+				public void sacar(double valor);
+}
+class Conta implements Interatividade{ //CLASSE CONTA QUE IMPLEMENTA OS METODOS ACIMA
+				
+				//CRIANDO OS ATRIBUTOS DA CLASSE
+				private String numConta;
+				private String nomeCliente;
+				private double saldo;
+				private boolean estado;
+				
+				//MÉTODO TOSTRING PARA MOSTRAR AS DESCRIÇÕES DA CONTA
+				public String toString(){
+								return "--- SOBRE A CONTA ---\n" +
+								"Num. da Conta: " + numConta + 
+								"\nNome do Cliente: " + nomeCliente +
+								"\nSaldo: " + saldo + "\nEstá Aberta? " + estado + "\n";
+				}
+				
+				//CRIANDO UM CONSTRUTOR DA CLASSE
+public Conta(String n, String num){
+				this.nomeCliente = n;
+				this.numConta = num;
+				this.saldo = 0.0;
+				this.estado = false;
+}				
+				
+				//CRIANDO OS METODOS ESPECIAIS DOS ATRIBUTOS
+				public String getNumConta(){ 
+								return this.numConta;
+				}
+				public void setNumConta(String num){ 
+								this.numConta = num;
+				}
+				public String getNomeCliente(){
+								return this.nomeCliente;
+				}
+				public void setNomeCliente(String c){
+								this.nomeCliente = c;
+				}
+				public double getSaldo(){
+								return this.saldo;
+				}
+								public void setSaldo(double s){
+												this.saldo = s;
+								}
+						public boolean getEstado(){
+										return this.estado;
+						}						
+				public void setEstado(boolean e){
+								this.estado = e;
+				}//FIM DOS MÉTODOS ESPECIAIS
+				
+				//MÉTODOS DE INTERAÇÃO DO USUÁRIO
+								@Override
+								public void abrirConta(){
+								this.estado = true;
+				}
+				@Override
+				public void fecharConta(){
+								if(this.getSaldo() > 0){
+												System.out.println("OPÇÃO FECHAR CONTA!\nNão é possível fechar sua conta se houver saldo disponível!\n" +
+												"Saldo: " + this.getSaldo());
+								}else{
+								this.estado = false;
+								System.out.println("CONTA FECHADA COM SUCESSO!!" + "\n---------------------------------------\n");				
+								}
+				}
+				
+				
+				//CRIANDO CLASSE PARA ESTENDER OS BLOCOS TRY CATCH
+				public class SaldoInsuficienteException extends Exception {
+    public SaldoInsuficienteException() {
+        super("OPÇÃO SAQUE:\nSaldo insuficiente para saque!");
+    }
+}
+				//MAIS UMA CLASSE PARA ESTENDER OUTRA EXCEÇÃO TRY CATCH
+				public class IllegalArgumentsException extends Exception {
+    public IllegalArgumentsException(String mensagem) {
+        super(mensagem);
+    }
+}
+				
+				
+				//MÉTODO PARA DEPOSITAR DINHEIRO NA CONTA
+				@Override
+				public void depositar(double v){
+								//INICIANDO UM BLOCO TRY PARA TRATAMENTO DE EXCEÇÕES
+								try{
+												//VERIFICANDO SE O DEPOSITO É VALIDO
+												if(Double.isNaN(v) || v > 1000000.000){
+																throw new IllegalArgumentsException("OPÇÃO DEPOSITAR:\nValor inválido para depósito!"+
+												"\nPor Favor, Insira um Valor Válido\n");
+												}
+												
+												//SE FOR VÁLIDO, O BLOCO ABAIXO SERÁ EXECUTADO SEM ERROS
+								this.setSaldo(this.getSaldo() + v);
+								System.out.println("DEPÓSITO REALIZADO COM SUCESSO!!\n"+    //QUEBRA DE LINHA PARA SEPARAR OS TEXTOS
+												"Você depositou: " + v + "\nSaldo Atual: " + this.getSaldo() + "\n---------------------------------------\n");
+								}catch(IllegalArgumentsException e){
+												System.out.println(e.getMessage());
+								}
+				}
+				//METODO DE SUBSTITUIÇÃO OVERRIDE
+				@Override
+				//MÉTODO PARA SACAR
+				public void sacar(double valor) {
+								//ADICIONANDO UM BLOCO TRY PARA TRATAMENTO DE EXCECÕES
+    try {
+    				//VERIFICANDO CONDIÇÕES E ADICIONANDO THROW
+        if (this.getSaldo() < valor) {
+            throw new SaldoInsuficienteException();
+        }
+      //VERIFICANDO CONDIÇÕES E ADICIONANDO THROW  				
+        if (valor < 0 || Double.isNaN(valor)) {
+            throw new IllegalArgumentsException("\nValor inválido para saque!" +
+        				"\nPor favor, insira um valor positivo e numérico válido.\n");
+        }
+    				
+    				//CASO NENHUMA DAS CONDIÇÕES FOREM VERDADEIRAS O SAQUE É REALIZADO NORMALMENTE
+    				else
+    								
+        this.setSaldo(this.getSaldo() - valor);
+        System.out.println("SAQUE REALIZADO COM SUCESSO!!\n" +      //AQUI É UMA QUEBRA DE LINHA PARA SEPARAR OS TEXTOS
+        				"Você sacou: " + valor + "\nSaldo Atual: " + this.getSaldo()+ "\n---------------------------------------\n");
+    } catch (SaldoInsuficienteException e) {
+        System.out.println("OPÇÃO SAQUE:\nVocê esta tentando realizar um saque de " + valor + 
+    				"\nSaldo insuficiente para saque!\n--------------------------------------\n");
+    } catch (IllegalArgumentsException e) {
+        System.out.println(e.getMessage());
+    }
+  }
+}
+
+//UMA CONTA POUPANCA QUE HERDA TODOS ATRIBUTOS E METODOS DA CLASSE CONTA
+class ContaPoupanca extends Conta{
+				//ATRIBUTO
+				private double taxaJurosAnual;
+				
+				//SUBSTITUIÇÃO DO MÉTODO toSTRING
+				@Override
+				public String toString(){
+								return "PARABÉNS! Sua conta poupança foi aberta com sucesso!!\n" +
+								"Por abrir uma conta poupança você ganhou R$50.00!!\n" + 
+								"--- SOBRE A CONTA POUPANÇA ---\n" +
+								"Saldo Poupança: " + this.getSaldo() + "\n";
+				}
+				
+				//METODO CONTRUTOR
+				public ContaPoupanca(){
+								super(" ", " ");
+								this.getNomeCliente();
+								this.getNumConta();
+								this.setSaldo(50.00);
+				}
+				
+				//MÉTODO ESPECIAL DO ATRIBUTO
+				public double getTaxaJurosAnual(){
+								return this.taxaJurosAnual;
+				}
+				public void setTaxaJurosAnual(double t){
+								this.taxaJurosAnual = t;
+				}
+				//FIM DO METODO ESPECIAL DO ATRIBUTO
+				
+				//SUBSTITUINDO OS METODOS DA CLASSE CONTA
+				@Override
+				public void abrirConta(){
+								this.setEstado(true);
+				 }
+				
+				@Override
+				public void fecharConta(){
+				this.setEstado(false);
+				if(this.getSaldo() > 0){
+								System.out.println("Não é possivel fechar sua conta se houver saldo disponível!" +
+								"Saldo: " + this.getSaldo());
+				}
+ }
+				//ADICIONANDO UM METODO ESPECIFICO PARA CLASSE CONTAPOUPANCA
+				public void pagarJuros(){
+								this.setTaxaJurosAnual(20.00);
+								if(this.getSaldo() >= this.getTaxaJurosAnual()){
+												this.setSaldo(this.getSaldo() - this.getTaxaJurosAnual());
+																System.out.println("Você selecionou a opção pagar juros!\nDeseja Continuar? SIM ou NÃO\nAnalisando Saldo...\n" + 
+																"Juros Pago com sucesso no valor de: " + this.getTaxaJurosAnual() +
+																"\nSaldo atual: " + this.getSaldo());
+								}
+				}
+}
+//UM CODIGO SIMPLES, OBJETIVO E EXPLICATIVO!FEITO, TOTALMENTE, NO CELULAR!!
